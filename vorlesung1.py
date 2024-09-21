@@ -1,4 +1,4 @@
-##### Aufgabe 12 (16 Punkte) Parkplatzverwaltungssystem
+# Aufgabe 12 (16 Punkte) Parkplatzverwaltungssystem
 
 '''
 In dieser Aufgabe sollen Sie zwei Klassen erstellen, die zusammenarbeiten, um ein Parkplatzverwaltungssystem zu modellieren. Die Klassen sind Fahrzeug und Parkplatz.
@@ -32,6 +32,7 @@ Wenn das Fahrzeug gefunden und entfernt wird, soll eine Bestätigung ausgegeben 
 Andernfalls wird eine Fehlermeldung angezeigt.
 '''
 
+
 class Fahrzeug:
     def __init__(self, kennzeichen, fahrzeugtyp):
         self.kennzeichen = kennzeichen
@@ -57,18 +58,20 @@ class Parkplatz:
             if geparktes_fahrzeug.kennzeichen == fahrzeug.kennzeichen:
                 print("Das Kennzeichen existiert schon.")
                 return
-            
+
         self.fahrzeuge.append(fahrzeug)
         fahrzeug.geparkt = True
 
     def verlassen(self, kennzeichen):
-       for geparktes_fahrzeug in self.fahrzeuge:
+        for geparktes_fahrzeug in self.fahrzeuge:
             if geparktes_fahrzeug.kennzeichen == kennzeichen:
                 self.fahrzeuge.remove(geparktes_fahrzeug)
                 geparktes_fahrzeug.geparkt = False
-                print(geparktes_fahrzeug.kennzeichen,"verlässt Parkplatz")
+                print(geparktes_fahrzeug.kennzeichen, "verlässt Parkplatz")
                 return
-                
+        print("Fahrzeug nicht gefunden")
+
+
 # Testfälle
 fahrzeug1 = Fahrzeug("KI-XY 123", "PKW")
 fahrzeug2 = Fahrzeug("ECK-AA 999", "Motorrad")
@@ -83,6 +86,3 @@ parkplatz.parken(fahrzeug3)  # Sollte Fehlermeldung ausgeben
 
 parkplatz.verlassen("KI-XY 123")
 parkplatz.verlassen("M-UD 555")  # Sollte Fehlermeldung ausgeben
-
-
-
