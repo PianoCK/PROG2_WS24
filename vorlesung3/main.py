@@ -46,10 +46,56 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED)
 # Das Dateisystem ermittelt das aktuelle Verzeichnis
 game_folder = os.path.dirname(__file__)
 
+# Flyweight-Pattern Dictionary von Sprites-Images
+sprite_images = {}
+sprite_images["ball"] = pygame.image.load(os.path.join(game_folder, 'ball.png')).convert_alpha()
+for i in range(1,9,1):
+    sprite_images["coin"+str(i)] = pygame.image.load(os.path.join(game_folder, '_images/coin'+str(i)+'.png')).convert_alpha()
+
 # Wir binden eine Grafik (Ball) ein
 # convert_alpha lässt eine PNG-Datei transparent erscheinen
-ball = pygame.image.load(os.path.join(game_folder, 'ball.png')).convert_alpha()
-imageRect = ball.get_rect()
+class Ball:
+    def __init__(self, x, y, sx, sy):
+        self.x = x
+        self.y = y
+        self.sx = sx
+        self.sy = sy
+        self.image = sprite_images["coin1"]
+        self.imageRect = self.image.get_rect()
+        self.timer = 0
+        self.anim_frames = 8
+        self.act_frame = 1
+        self.max_ticks_anim = 0.6 * FPS / self.anim_frames # in 2 sec einmal drehen
+
+    def update(self):
+        # Animation
+        self.timer += 1
+        if self.timer >= self.max_ticks_anim:
+            self.timer = 0
+            self.act_frame += 1
+            if self.act_frame > self.anim_frames:
+                self.act_frame = 1
+            self.image = sprite_images["coin" + str(self.act_frame)]
+
+
+        self.x = self.x + self.sx
+        self.y = self.y + self.sy
+        self.imageRect.topleft = (self.x,self.y)
+
+        if self.imageRect.right >= WIDTH or self.imageRect.left <= 0:
+            self.sx *= -1
+
+        if self.imageRect.bottom >= HEIGHT or self.imageRect.top <= 0:
+            self.sy *= -1
+
+sprites = []
+# Sprite Factory
+for _ in range(10):
+    sprites.append(Ball(random.randint(64, WIDTH - 64),
+                        random.randint(64, HEIGHT - 64),
+                        random.choice([-3, -2, -1, 1, 2, 3]),
+                        random.choice([-3, -2, -1, 1, 2, 3])))
+
 
 #########################################################################
 # Game Loop:  Hier ist das Herzstück des Templates
@@ -84,8 +130,8 @@ while running:
 
     #########################################################################
     # 3. Update-Phase: Hier ist die komplette Game Logik untergebracht.
-    imageRect.topleft = (40,80)
-
+    for sprite in sprites:
+        sprite.update()
 
     #########################################################################
     # 4. Render-Phase: Zeichne alles auf den Bildschirm
@@ -94,7 +140,8 @@ while running:
     screen.fill((255, 255, 255))    # RGB Weiß
 
     # Zeichne Objekte an Position auf den Screen
-    screen.blit(ball, imageRect)
+    for sprite in sprites:
+        screen.blit(sprite.image, sprite.imageRect)
 
     #########################################################################
     # 5. Double Buffering
