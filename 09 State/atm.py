@@ -1,7 +1,7 @@
-from __future__ import annotations
-from abc import ABC, abstractmethod
 from state import *
 
+# Hier ist die spezielle State Machine für einen ATM
+# Ich habe dabei die Methoden nicht abstrakt definiert, so dass diese in den Kindklassen vorhanden sind.
 class ATMState(State):
     def kontoauszug(self):
         pass
@@ -40,7 +40,7 @@ class ATM(Context):
     def problem(self):
         self._state.problem()
 
-# Jetzt kommen die einzelnen States
+# Jetzt definieren wir die einzelnen Zustände und was diese im Context machen dürfen 
 
 class ATMDefekt(ATMState):
     pass
